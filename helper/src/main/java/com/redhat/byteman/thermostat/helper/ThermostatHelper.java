@@ -18,12 +18,21 @@
 
 package com.redhat.byteman.thermostat.helper;
 
+import com.mongodb.*;
+
+import java.net.UnknownHostException;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Byteman Helper that sends data to Thermostat
  */
 public class ThermostatHelper {
 
-    public static void activated() {
+    private static final AtomicInteger counter = new AtomicInteger();
+    private static MongoClient mc;
+
+    public static void activated() throws UnknownHostException {
+        mc = new MongoClient("127.0.0.1", 27518);
         System.out.println("ThermostatHelper#activated");
     }
 
@@ -36,11 +45,16 @@ public class ThermostatHelper {
     }
 
     public static void deactivated() {
+        mc.close();
         System.out.println("ThermostatHelper#deactivated");
     }
 
     public boolean sendToThermostat(String message) {
         System.out.println("sendToThermostat: [" + message + "]");
+        DB db = mc.getDB("thermostat");
+        DBCollection col = db.getCollection("byteman-test-1");
+        BasicDBObject doc = new BasicDBObject("message_" + counter.incrementAndGet(), message);
+        col.insert(doc);
         return true;
     }
 }
