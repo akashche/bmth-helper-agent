@@ -1,0 +1,8 @@
+RULE 02
+CLASS com.redhat.byteman.thermostat.app.Application
+METHOD main
+HELPER com.redhat.byteman.thermostat.helper.ThermostatHelper
+AT ENTRY
+IF true
+DO sendToThermostat("entering main")
+ENDRULE
