@@ -24,9 +24,9 @@
     </properties>
 
     <scm>
-        <url>https://github.com/akashche/byteman-examples</url>
-        <connection>scm:git:https://github.com/akashche/byteman-examples.git</connection>
-        <developerConnection>scm:git:https://github.com/akashche/byteman-examples.git</developerConnection>
+        <url>https://github.com/akashche/bmth-helper-agent</url>
+        <connection>scm:git:https://github.com/akashche/bmth-helper-agent.git</connection>
+        <developerConnection>scm:git:https://github.com/akashche/bmth-helper-agent.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
