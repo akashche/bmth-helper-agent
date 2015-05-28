@@ -19,6 +19,10 @@
 package com.redhat.byteman.thermostat.helper;
 
 import com.mongodb.*;
+import com.redhat.thermostat.storage.core.DescriptorParsingException;
+import com.redhat.thermostat.storage.core.StatementExecutionException;
+import com.redhat.thermostat.storage.core.Storage;
+import com.redhat.thermostat.storage.mongodb.internal.MongoAccessor;
 
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,10 +34,12 @@ public class ThermostatHelper {
 
     private static final AtomicInteger counter = new AtomicInteger();
     private static MongoClient mc;
+    private static Storage st;
 
-    public static void activated() throws UnknownHostException {
-        mc = new MongoClient("127.0.0.1", 27518);
+    public static void activated() throws UnknownHostException, DescriptorParsingException, StatementExecutionException {
+        st = new MongoAccessor("mongodb://127.0.0.1:27518").connect();
         System.out.println("ThermostatHelper#activated");
+        System.out.println("Mongo connected: [" + st.getConnection().isConnected() +"]");
     }
 
     public static void installed(String ruleName) {
@@ -49,12 +55,9 @@ public class ThermostatHelper {
         System.out.println("ThermostatHelper#deactivated");
     }
 
-    public boolean sendToThermostat(String message) {
+    public boolean sendToThermostat(String message) throws DescriptorParsingException, StatementExecutionException {
         System.out.println("sendToThermostat: [" + message + "]");
-        DB db = mc.getDB("thermostat");
-        DBCollection col = db.getCollection("byteman-test-1");
-        BasicDBObject doc = new BasicDBObject("message_" + counter.incrementAndGet(), message);
-        col.insert(doc);
+        new TestStatDAO().add(st, new TestStat("42", 42, "42", message));
         return true;
     }
 }
